@@ -34,8 +34,11 @@ from typing import Any, Dict, List, Optional, Tuple
 
 from conllu import parse_incr
 from openai import OpenAI
+from functools import lru_cache
 
-client = OpenAI()
+@lru_cache(maxsize=1)
+def get_client():
+    return OpenAI()
 
 DEPRELS = ["SBJ", "OBJ", "PRD", "TPC", "IDF", "TMZ", "MOD", "---"]
 
@@ -721,7 +724,7 @@ def prepare_batch(args):
 
 def upload_file(args):
     batch_path = os.path.join(args.cache_dir, args.cache_name)
-    batch_input_file = client.files.create(
+    batch_input_file = get_client().files.create(
         file=open(batch_path, "rb"),
         purpose="batch",
     )
@@ -734,7 +737,7 @@ def upload_file(args):
 # ---------------------------
 
 def create_batch(args):
-    batch = client.batches.create(
+    batch = get_client().batches.create(
         input_file_id=args.file_id,
         endpoint="/v1/responses",
         completion_window=args.completion_window,
@@ -749,7 +752,7 @@ def create_batch(args):
 # ---------------------------
 
 def check_status(args):
-    batch = client.batches.retrieve(args.batch_id)
+    batch = get_client().batches.retrieve(args.batch_id)
     print(f"📊 Status: {batch.status}")
 
     if getattr(batch, "output_file_id", None):
@@ -766,7 +769,7 @@ def check_status(args):
 # ---------------------------
 
 def download_results(args):
-    output = client.files.content(args.output_file_id)
+    output = get_client().files.content(args.output_file_id)
     out_dir = args.out_dir or args.cache_dir
     os.makedirs(out_dir, exist_ok=True)
     result_path = os.path.join(out_dir, args.results_name)
@@ -809,7 +812,7 @@ def wait_for_batch_completion(
     last_status = None
 
     while True:
-        batch = client.batches.retrieve(batch_id)
+        batch = get_client().batches.retrieve(batch_id)
         elapsed = time.time() - start
         status = batch.status
 
@@ -1316,14 +1319,14 @@ def run_all(args):
     batch_file, expected_requests, shots_meta = prepare_batch(args)
 
     # 2) upload
-    file_id = client.files.create(
+    file_id = get_client().files.create(
         file=open(batch_file, "rb"),
         purpose="batch",
     ).id
     print(f"✅ Uploaded file ID: {file_id}")
 
     # 3) create
-    batch = client.batches.create(
+    batch = get_client().batches.create(
         input_file_id=file_id,
         endpoint="/v1/responses",
         completion_window=args.completion_window,
@@ -1369,7 +1372,7 @@ def run_all(args):
     output_file_id = getattr(final_batch, "output_file_id", None)
 
     if status == "completed" and output_file_id:
-        output = client.files.content(output_file_id)
+        output = get_client().files.content(output_file_id)
         results_path = os.path.join(out_dir, f"{batch_id}_results.jsonl")
 
         with open(results_path, "w", encoding="utf-8") as f:
@@ -1391,7 +1394,7 @@ def run_all(args):
 
         if getattr(final_batch, "error_file_id", None):
             try:
-                err = client.files.content(final_batch.error_file_id)
+                err = get_client().files.content(final_batch.error_file_id)
                 err_path = os.path.join(out_dir, f"{batch_id}_errors.txt")
 
                 with open(err_path, "w", encoding="utf-8") as ef:
