@@ -1,0 +1,6 @@
+conllu
+openai
+google-genai
+PyYAML
+numpy
+scipy

@@ -1,0 +1,29 @@
+{
+  "started_epoch": 1789136346.7505696,
+  "finished_epoch": 1789136484.129594,
+  "elapsed_seconds": 137.37902525812387,
+  "pool_sizes": {
+    "patb_camel": 25186,
+    "barectb": 9580,
+    "patb_camel_barec": 34766
+  },
+  "query_sizes": {
+    "dev": 3071,
+    "test": 2732
+  },
+  "matrix_build_seconds": {
+    "char_1": 1.6878789365291595,
+    "char_2": 2.144480437040329,
+    "char_3": 2.3543346896767616,
+    "char_4": 2.4733849093317986,
+    "char_5": 2.6515411362051964,
+    "char_6": 2.8431416042149067,
+    "word_1": 0.6504913531243801,
+    "word_2": 0.7445670813322067
+  },
+  "split_scoring_seconds": {
+    "dev": 58.34880080446601,
+    "test": 56.36228169500828
+  },
+  "scalar_validation_max_absolute_error": 0.0
+}
