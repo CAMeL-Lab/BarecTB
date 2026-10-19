@@ -1,51 +1,21 @@
-# Source material retained in this working directory, outside the release tree.
-/2026_ArabicNLP_BAREC_TB__Camera_Ready_/
-/2026_ArabicNLP_BAREC_TB__Camera_Ready_ (1)/
-/BAREC-TB-Final-160K/
-/CamelTB/
-/PATB+CamelTB/
-/PATB_with_text/
-/Splits/
-/analysis/
-/arabicmmlu_conll_splits/
-/arabicmmlu_conll_splits_consistent_multiroot/
-/arabicmmlu_conll_splits_consistent_multiroot.zip
-/barec_tb_160k_benchmarks_portable/
-/codes/
-/combined/
-/conllx_by_source/
-/corrected_full_gold_consistent_multiroot/
-/final_results/
-/manual_fixes/
-/new_BAREC_TB_160k/
-/new_BAREC_TB_160k_by_genre/
-/old_Splits/
-/old_results/
-/old_shots/
-/open_source_results/
-/raw_text_experiment/
-/readability/
-/reproducibility/
-/results/
-/results copy/
-/results_tables/
-/retrain-models/
-/shots/
-/text_Splits/
-/utils/
-/.DS_Store
-
-# External checkouts, credentials and generated artifacts.
+# Downloads and external tools.
+/models/*.model
+/external/
 /data/benchmark/train/patb_camel.conllx
 /data/benchmark/train/patb_camel_barec.conllx
-/external/
+
+# Credentials and generated output.
 /secrets/
 /outputs/
+.env
+.env.*
+!.env.example
+
+# Local Python environments and caches.
+.venv/
+.venv-*/
+venv/
 __pycache__/
 *.pyc
 *.log
-.env
-
-
-# Checkpoint weights are downloaded from Hugging Face.
-/models/*.model
+.DS_Store

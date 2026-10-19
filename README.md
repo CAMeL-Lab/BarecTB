@@ -1,6 +1,6 @@
 # BARECTB
 
-BARECTB is a CATiB dependency treebank and parsing benchmark for Arabic children's texts. This repository collects the corpus splits, model download and inference instructions, and the actual retrieval, LLM benchmarking, and evaluation code used in the project. The three supervised CAMeL Parser checkpoints are hosted on Hugging Face. The original working files remain in this local folder but are excluded from the release tree.
+BARECTB is a CATiB dependency treebank and parsing benchmark for Arabic children's texts. This repository collects the corpus splits, model download and inference instructions, and the actual retrieval, LLM benchmarking, and evaluation code used in the project. The three supervised CAMeL Parser checkpoints are hosted on Hugging Face.
 
 ## Contents
 
@@ -17,7 +17,7 @@ BARECTB is a CATiB dependency treebank and parsing benchmark for Arabic children
 | `evaluation/` | Original parser prediction scripts and a small launcher for upstream CAMeL CoNLL evaluation. |
 | `reports/` | Summary TSVs from the completed expanded benchmarks. |
 
-The paper version and expanded version must be compared separately; they have different splits and model generations. The Hugging Face collection contains the original paper-era three checkpoints; the downloader saves them into `models/`. The later expanded checkpoints remain in the local source archive and are not represented here as the paper's three models.
+The paper version and expanded version must be compared separately; they have different splits and model generations. The Hugging Face collection contains the original paper-era three checkpoints; the downloader saves them into `models/`. The later expanded checkpoints are separate artifacts and are not included in this release.
 
 Download all three supervised models from the [CAMeL-Lab CamelParser-BARECTB collection](https://huggingface.co/collections/CAMeL-Lab/camelparser-barectb-6ad5d147a150e48c97598630):
 

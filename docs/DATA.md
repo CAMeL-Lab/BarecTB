@@ -9,6 +9,6 @@
 - `patb_camel.conllx`: the PATB and CAMeL Treebank training pool used in the experiment.
 - `patb_camel_barec.conllx`: that pool followed by expanded BARECTB Train in the original order.
 
-Those two files are deliberately user supplied because they contain third party treebanks. The optimized retrieval script verifies the concatenation order. The original project folder contains local copies, but this release does not copy them into Git.
+Those two files are deliberately user supplied because they contain third party treebanks. The optimized retrieval script verifies the concatenation order. Obtain those corpora separately and provide them locally when reproducing the corresponding retrieval conditions.
 
 No data license was present in the source folder. Redistribution terms should be added by the authors before public release.

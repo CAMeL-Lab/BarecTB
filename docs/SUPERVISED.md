@@ -41,4 +41,4 @@ The CLI also accepts `-f conll -i /path/to/input.conllx` for preannotated input 
 
 For the gold/raw prediction matrix used in the expanded work, the original driver is `evaluation/predict_all_models_cached.py`. It accepts `--camel-parser-root`, `--gold-dir`, `--model-table`, `--output-root`, and `--cache`. The included `evaluation/model_table.tsv` lists the three original checkpoints using repository-relative paths, so run it from the repository root. This path requires the upstream parser and its Python dependencies. The raw MSA-S31 driver is `evaluation/predict_all_models_raw_s31.py` and additionally needs the licensed morphology database described in the upstream README.
 
-The original training commands remain in the local source folder `retrain-models/` for provenance; their scripts assume HPC paths and third party corpora, so the released checkpoints are the simplest way to run inference.
+The original YAML configurations preserve the training settings and historical HPC paths as provenance. Use the published Hugging Face checkpoints for inference; those historical paths are not required.
