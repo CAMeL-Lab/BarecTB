@@ -10,6 +10,8 @@ The three original checkpoints in `models/` are:
 
 Their original YAML configurations and SHA-256 checksums are alongside the checkpoints. Verify after transfer with `cd models && shasum -a 256 -c SHA256SUMS` on macOS, or `sha256sum -c SHA256SUMS` on Linux.
 
+Hugging Face model cards and the upload command for the CAMeL-Lab collection are prepared in [huggingface/README.md](../huggingface/README.md). The publication script records verified remote URLs after upload.
+
 ## Install upstream parser
 
 Use Python 3.11.13 as specified by [CAMeL Parser](https://github.com/CAMeL-Lab/camel_parser/tree/main). From the repository root:

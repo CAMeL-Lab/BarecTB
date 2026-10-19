@@ -1,0 +1,31 @@
+{
+  "namespace": "CAMeL-Lab",
+  "collection_title": "CamelParser-BARECTB",
+  "collection_description": "Three supervised CATiB dependency parsers accompanying BARECTB: A Dependency Treebank and Parsing Benchmark for Arabic Children’s Texts (ArabicNLP 2026).",
+  "models": [
+    {
+      "repo_id": "CAMeL-Lab/camelparser-barectb-BARECTB",
+      "checkpoint": "models/barectb.model",
+      "config": "models/barectb.model.yaml",
+      "card_dir": "huggingface/camelparser-barectb-BARECTB",
+      "sha256": "ad6084fea414743b0df1b96c3c9d65fca91da4df98f697d7ef183749a8d705b8",
+      "training_data": "BARECTB"
+    },
+    {
+      "repo_id": "CAMeL-Lab/camelparser-barectb-PATB-CamelTB",
+      "checkpoint": "models/patb_camel.model",
+      "config": "models/patb_camel.model.yaml",
+      "card_dir": "huggingface/camelparser-barectb-PATB-CamelTB",
+      "sha256": "086b4fb610b09ded0024708ecb5c76a440e58e1151805eb97e0bb2f51f0d0d13",
+      "training_data": "PATB and CAMeL Treebank"
+    },
+    {
+      "repo_id": "CAMeL-Lab/camelparser-barectb-PATB-CamelTB-BARECTB",
+      "checkpoint": "models/patb_camel_barec.model",
+      "config": "models/patb_camel_barec.model.yaml",
+      "card_dir": "huggingface/camelparser-barectb-PATB-CamelTB-BARECTB",
+      "sha256": "7af1ea206d2a85693314eb41ff75d53e3e16c05841cf8702930eb567731f7479",
+      "training_data": "PATB, CAMeL Treebank, and BARECTB"
+    }
+  ]
+}

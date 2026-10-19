@@ -9,6 +9,7 @@ BARECTB is a CATiB dependency treebank and parsing benchmark for Arabic children
 | `data/paper/` | Original paper Train, Dev, Test, and All CoNLL-X files: 11,651 sentences, 130,671 tree tokens across the three splits. |
 | `data/expanded_160k/` | Later expanded Train, Dev, Test, and All CoNLL-X files: 15,383 sentences, 185,552 tree tokens across the three splits. These are a separate benchmark version. |
 | `models/` | Original three supervised checkpoints and YAML configurations. Checkpoints need Git LFS for GitHub. |
+| `huggingface/` | Model cards and publication manifest for a CAMeL-Lab collection; see its README for upload instructions. |
 | `benchmarks/paper/` | Original gold-token and raw-text vLLM, GPT Batch, and Gemini runners, plus chrF++ shot generation. |
 | `benchmarks/expanded/` | Later shared Fanar-2/Llama 4 Scout vLLM runner, optimized top-10 chrF++ retrieval, and GPT-5.4/Gemini-3.5-Flash Batch runner. |
 | `benchmarks/prompts/` | Gold-token and raw-text prompt YAML used by the runners. |
