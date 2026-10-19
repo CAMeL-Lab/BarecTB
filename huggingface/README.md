@@ -8,12 +8,18 @@ The three original checkpoints in `models/` are published in the [CamelParser-BA
 | [CAMeL-Lab/camelparser-barectb-PATB-CamelTB](https://huggingface.co/CAMeL-Lab/camelparser-barectb-PATB-CamelTB) | `models/patb_camel.model` | PATB and CAMeL Treebank |
 | [CAMeL-Lab/camelparser-barectb-PATB-CamelTB-BARECTB](https://huggingface.co/CAMeL-Lab/camelparser-barectb-PATB-CamelTB-BARECTB) | `models/patb_camel_barec.model` | PATB, CAMeL Treebank, and BARECTB |
 
-These are the original paper-era checkpoints selected in the Git repository. Each upload includes the original binary, original YAML configuration, a model card with CAMeL Parser inference instructions, a checksum, and the paper citation. Model cards use the encoder recorded in the YAML configurations. No license or performance scores have been inferred from the dialect models.
+These are the original paper-era checkpoints referenced by the Git repository; their weights are hosted on Hugging Face. Each upload includes the original binary, original YAML configuration, a model card with CAMeL Parser inference instructions, a checksum, and the paper citation. Model cards use the encoder recorded in the YAML configurations. No license or performance scores have been inferred from the dialect models.
 
-From the repository root:
+To download the published checkpoints from the repository root:
 
 ```bash
-python -m pip install huggingface_hub
+python -m pip install -r requirements-models.txt
+python scripts/download_models.py
+```
+
+To maintain the published model repositories and collection:
+
+```bash
 hf auth login
 python scripts/upload_huggingface_models.py --dry-run
 python scripts/upload_huggingface_models.py

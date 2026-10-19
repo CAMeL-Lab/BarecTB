@@ -46,3 +46,6 @@ __pycache__/
 *.log
 .env
 
+
+# Checkpoint weights are downloaded from Hugging Face.
+/models/*.model

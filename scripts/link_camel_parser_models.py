@@ -20,7 +20,7 @@ def main() -> None:
     for name in NAMES:
         source = ROOT / "models" / f"{name}.model"
         if not source.is_file():
-            parser.error(f"missing checkpoint: {source}")
+            parser.error(f"missing checkpoint: {source}; run python scripts/download_models.py first")
         target = target_dir / source.name
         if target.is_symlink() and target.resolve() == source:
             print(f"already linked: {target}")

@@ -1,6 +1,6 @@
 # BARECTB
 
-BARECTB is a CATiB dependency treebank and parsing benchmark for Arabic children's texts. This repository collects the corpus splits, the three supervised CAMeL Parser checkpoints, and the actual retrieval, LLM benchmarking, and evaluation code used in the project. The original working files remain in this local folder but are excluded from the release tree.
+BARECTB is a CATiB dependency treebank and parsing benchmark for Arabic children's texts. This repository collects the corpus splits, model download and inference instructions, and the actual retrieval, LLM benchmarking, and evaluation code used in the project. The three supervised CAMeL Parser checkpoints are hosted on Hugging Face. The original working files remain in this local folder but are excluded from the release tree.
 
 ## Contents
 
@@ -8,7 +8,7 @@ BARECTB is a CATiB dependency treebank and parsing benchmark for Arabic children
 | --- | --- |
 | `data/paper/` | Original paper Train, Dev, Test, and All CoNLL-X files: 11,651 sentences, 130,671 tree tokens across the three splits. |
 | `data/expanded_160k/` | Later expanded Train, Dev, Test, and All CoNLL-X files: 15,383 sentences, 185,552 tree tokens across the three splits. These are a separate benchmark version. |
-| `models/` | Original three supervised checkpoints and YAML configurations. Checkpoints need Git LFS for GitHub. |
+| `models/` | Original supervised model configurations and checksums. Download checkpoint weights here from Hugging Face. |
 | `huggingface/` | Published model cards, manifest, and verified Hugging Face model and collection URLs. |
 | `benchmarks/paper/` | Original gold-token and raw-text vLLM, GPT Batch, and Gemini runners, plus chrF++ shot generation. |
 | `benchmarks/expanded/` | Later shared Fanar-2/Llama 4 Scout vLLM runner, optimized top-10 chrF++ retrieval, and GPT-5.4/Gemini-3.5-Flash Batch runner. |
@@ -17,9 +17,16 @@ BARECTB is a CATiB dependency treebank and parsing benchmark for Arabic children
 | `evaluation/` | Original parser prediction scripts and a small launcher for upstream CAMeL CoNLL evaluation. |
 | `reports/` | Summary TSVs from the completed expanded benchmarks. |
 
-The paper version and expanded version must be compared separately; they have different splits and model generations. `models/` contains the original paper-era three checkpoints. The later expanded checkpoints remain in the local source archive and are not represented here as the paper's three models.
+The paper version and expanded version must be compared separately; they have different splits and model generations. The Hugging Face collection contains the original paper-era three checkpoints; the downloader saves them into `models/`. The later expanded checkpoints remain in the local source archive and are not represented here as the paper's three models.
 
-Download the supervised models from the [CAMeL-Lab CamelParser-BARECTB collection](https://huggingface.co/collections/CAMeL-Lab/camelparser-barectb-6ad5d147a150e48c97598630).
+Download all three supervised models from the [CAMeL-Lab CamelParser-BARECTB collection](https://huggingface.co/collections/CAMeL-Lab/camelparser-barectb-6ad5d147a150e48c97598630):
+
+```bash
+python -m pip install -r requirements-models.txt
+python scripts/download_models.py
+```
+
+The downloader uses verified Hugging Face revisions and checks each checkpoint’s SHA-256 checksum. Downloaded weights are ignored by Git.
 
 ## Start here
 
