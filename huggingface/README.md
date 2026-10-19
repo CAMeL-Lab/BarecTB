@@ -1,12 +1,12 @@
 # Hugging Face publication
 
-The three original checkpoints in `models/` are prepared for publication under CAMeL-Lab as a new **CamelParser-BARECTB** collection, following the organization of the existing [CamelParser-Dialects collection](https://huggingface.co/collections/CAMeL-Lab/camelparser-dialects).
+The three original checkpoints in `models/` are published in the [CamelParser-BARECTB collection](https://huggingface.co/collections/CAMeL-Lab/camelparser-barectb-6ad5d147a150e48c97598630) under CAMeL-Lab, following the organization of the existing [CamelParser-Dialects collection](https://huggingface.co/collections/CAMeL-Lab/camelparser-dialects).
 
 | Repository | Local checkpoint | Training condition |
 | --- | --- | --- |
-| `CAMeL-Lab/camelparser-barectb-BARECTB` | `models/barectb.model` | BARECTB |
-| `CAMeL-Lab/camelparser-barectb-PATB-CamelTB` | `models/patb_camel.model` | PATB and CAMeL Treebank |
-| `CAMeL-Lab/camelparser-barectb-PATB-CamelTB-BARECTB` | `models/patb_camel_barec.model` | PATB, CAMeL Treebank, and BARECTB |
+| [CAMeL-Lab/camelparser-barectb-BARECTB](https://huggingface.co/CAMeL-Lab/camelparser-barectb-BARECTB) | `models/barectb.model` | BARECTB |
+| [CAMeL-Lab/camelparser-barectb-PATB-CamelTB](https://huggingface.co/CAMeL-Lab/camelparser-barectb-PATB-CamelTB) | `models/patb_camel.model` | PATB and CAMeL Treebank |
+| [CAMeL-Lab/camelparser-barectb-PATB-CamelTB-BARECTB](https://huggingface.co/CAMeL-Lab/camelparser-barectb-PATB-CamelTB-BARECTB) | `models/patb_camel_barec.model` | PATB, CAMeL Treebank, and BARECTB |
 
 These are the original paper-era checkpoints selected in the Git repository. Each upload includes the original binary, original YAML configuration, a model card with CAMeL Parser inference instructions, a checksum, and the paper citation. Model cards use the encoder recorded in the YAML configurations. No license or performance scores have been inferred from the dialect models.
 

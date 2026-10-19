@@ -38,6 +38,8 @@ def main() -> None:
     parser.add_argument('--dry-run', action='store_true', help='Check local files and hashes without network access or publication')
     args = parser.parse_args()
     manifest = json.loads(MANIFEST.read_text())
+    if len(manifest['collection_description']) > 150:
+        raise SystemExit('Hugging Face collection descriptions must be at most 150 characters.')
     for spec in manifest['models']:
         for path in upload_files(spec).values():
             if not path.is_file():

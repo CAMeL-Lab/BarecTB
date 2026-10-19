@@ -1,7 +1,7 @@
 {
   "namespace": "CAMeL-Lab",
   "collection_title": "CamelParser-BARECTB",
-  "collection_description": "Three supervised CATiB dependency parsers accompanying BARECTB: A Dependency Treebank and Parsing Benchmark for Arabic Children’s Texts (ArabicNLP 2026).",
+  "collection_description": "Supervised Arabic CATiB parsers trained on BARECTB, PATB + CAMeL Treebank, and their combination (ArabicNLP 2026).",
   "models": [
     {
       "repo_id": "CAMeL-Lab/camelparser-barectb-BARECTB",

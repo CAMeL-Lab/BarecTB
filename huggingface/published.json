@@ -1,0 +1,25 @@
+{
+  "namespace": "CAMeL-Lab",
+  "models": [
+    {
+      "repo_id": "CAMeL-Lab/camelparser-barectb-BARECTB",
+      "url": "https://huggingface.co/CAMeL-Lab/camelparser-barectb-BARECTB",
+      "commit": "6a77f034f72687040b9d34a19fd787e57c075308",
+      "sha256": "ad6084fea414743b0df1b96c3c9d65fca91da4df98f697d7ef183749a8d705b8"
+    },
+    {
+      "repo_id": "CAMeL-Lab/camelparser-barectb-PATB-CamelTB",
+      "url": "https://huggingface.co/CAMeL-Lab/camelparser-barectb-PATB-CamelTB",
+      "commit": "f81dee630d2889d2eaf2f5e3569ead362a0effe5",
+      "sha256": "086b4fb610b09ded0024708ecb5c76a440e58e1151805eb97e0bb2f51f0d0d13"
+    },
+    {
+      "repo_id": "CAMeL-Lab/camelparser-barectb-PATB-CamelTB-BARECTB",
+      "url": "https://huggingface.co/CAMeL-Lab/camelparser-barectb-PATB-CamelTB-BARECTB",
+      "commit": "d4ec8618b3befa4b29990d482c4e16569942ea0a",
+      "sha256": "7af1ea206d2a85693314eb41ff75d53e3e16c05841cf8702930eb567731f7479"
+    }
+  ],
+  "collection_url": "https://huggingface.co/collections/CAMeL-Lab/camelparser-barectb-6ad5d147a150e48c97598630",
+  "collection_slug": "CAMeL-Lab/camelparser-barectb-6ad5d147a150e48c97598630"
+}

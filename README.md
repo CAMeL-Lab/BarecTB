@@ -9,7 +9,7 @@ BARECTB is a CATiB dependency treebank and parsing benchmark for Arabic children
 | `data/paper/` | Original paper Train, Dev, Test, and All CoNLL-X files: 11,651 sentences, 130,671 tree tokens across the three splits. |
 | `data/expanded_160k/` | Later expanded Train, Dev, Test, and All CoNLL-X files: 15,383 sentences, 185,552 tree tokens across the three splits. These are a separate benchmark version. |
 | `models/` | Original three supervised checkpoints and YAML configurations. Checkpoints need Git LFS for GitHub. |
-| `huggingface/` | Model cards and publication manifest for a CAMeL-Lab collection; see its README for upload instructions. |
+| `huggingface/` | Published model cards, manifest, and verified Hugging Face model and collection URLs. |
 | `benchmarks/paper/` | Original gold-token and raw-text vLLM, GPT Batch, and Gemini runners, plus chrF++ shot generation. |
 | `benchmarks/expanded/` | Later shared Fanar-2/Llama 4 Scout vLLM runner, optimized top-10 chrF++ retrieval, and GPT-5.4/Gemini-3.5-Flash Batch runner. |
 | `benchmarks/prompts/` | Gold-token and raw-text prompt YAML used by the runners. |
@@ -18,6 +18,8 @@ BARECTB is a CATiB dependency treebank and parsing benchmark for Arabic children
 | `reports/` | Summary TSVs from the completed expanded benchmarks. |
 
 The paper version and expanded version must be compared separately; they have different splits and model generations. `models/` contains the original paper-era three checkpoints. The later expanded checkpoints remain in the local source archive and are not represented here as the paper's three models.
+
+Download the supervised models from the [CAMeL-Lab CamelParser-BARECTB collection](https://huggingface.co/collections/CAMeL-Lab/camelparser-barectb-6ad5d147a150e48c97598630).
 
 ## Start here
 
