@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Decode raw Dev/Test with six models, two decoders, and explicit MSA-S31."""
+"""Decode raw Dev/Test for a model table, two decoders, and explicit MSA-S31."""
 
 from __future__ import annotations
 
@@ -69,8 +69,8 @@ def load_models(path: Path) -> list[tuple[str, str, Path]]:
         if not candidate.is_file() or candidate.stat().st_size == 0:
             raise FileNotFoundError(candidate)
         rows.append((generation, run_name, candidate))
-    if len(rows) != 6:
-        raise ValueError(f"Expected six models in {path}, found {len(rows)}")
+    if not rows:
+        raise ValueError(f"No models in {path}")
     return rows
 
 

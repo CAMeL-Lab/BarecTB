@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run the cached six-model predictor with CAMeL Parser multiroot decoding.
+"""Run the cached model-table predictor with CAMeL Parser multiroot decoding.
 
 The underlying predictor is intentionally kept unchanged so the completed
 single-root run remains reproducible.  This wrapper applies the same decode

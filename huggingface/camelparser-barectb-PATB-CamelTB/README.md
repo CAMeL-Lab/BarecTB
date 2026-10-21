@@ -53,10 +53,10 @@ hf_hub_download(
 Then parse raw Arabic text:
 
 ```bash
-python text_to_conll_cli.py -f text -m patb_camel.model -s "القطة نائمة."
+python text_to_conll_cli.py -f text -b calima-msa-s31 -d bert -m patb_camel.model -s "القطة نائمة."
 ```
 
-Use `-i input.txt` for a file of sentences. The optional MSA-S31 morphology database requires the separate installation and access steps documented upstream.
+Use `-i input.txt` for a file of sentences. Use CAMeL Parser’s MSA-S31 paper setup: install `morphology-db-msa-s31` and `disambig-bert-unfactored-msa` with `camel_data -i`, then run `camel_data -p morphology-db-msa-s31 /path/to/LDC2010L01.tgz` using the unextracted archive obtained through LDC. The command above explicitly selects MSA-S31 and BERT disambiguation.
 
 ## Scope
 

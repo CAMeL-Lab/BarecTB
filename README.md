@@ -42,9 +42,13 @@ Download the three published checkpoints and link them into CAMeL Parser:
 ```bash
 python scripts/download_models.py
 python scripts/link_camel_parser_models.py external/camel_parser
-camel_data -i morphology-db-msa-r13
+camel_data -i morphology-db-msa-s31
 camel_data -i disambig-bert-unfactored-msa
+# Download LDC2010L01.tgz from your LDC account; leave the archive unextracted.
+camel_data -p morphology-db-msa-s31 /path/to/LDC2010L01.tgz
 ```
+
+This uses the **MSA-S31 morphology database and BERT disambiguator**, following [CAMeL Parser’s paper setup](https://github.com/CAMeL-Lab/camel_parser#using-another-morphology-database). Installing MSA-S31 requires access to [LDC2010L01](https://catalog.ldc.upenn.edu/LDC2010L01); its archive is a separate resource from the Python requirements.
 
 | Model name | Training data |
 | --- | --- |
@@ -58,7 +62,7 @@ Run a model on an Arabic sentence:
 # The published SuPar checkpoints use full-object serialization.
 export TORCH_FORCE_NO_WEIGHTS_ONLY_LOAD=1
 cd external/camel_parser
-python text_to_conll_cli.py -f text -m barectb.model -s "القطة نائمة."
+python text_to_conll_cli.py -f text -b calima-msa-s31 -d bert -m barectb.model -s "القطة نائمة."
 cd ../..
 ```
 

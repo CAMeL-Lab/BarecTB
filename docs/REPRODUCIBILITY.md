@@ -12,6 +12,8 @@ Do not install the older `camel_parser/requirements.txt` and `camel_conll/requir
 
 The archived expanded Fanar/Llama logs identify **vLLM `0.11.1rc3.dev20+g3b7bdf983`**. `requirements.txt` pins the adjacent public `0.11.1` release as an installable baseline. It does not claim to recreate that development build or every historical GPU kernel. The older parser requirements used CAMeL Tools 1.5.6 and Transformers 4.29.2; those exact pins cannot share the vLLM environment. The consolidated set is a compatibility update, not the original environment lock.
 
+Supervised raw-text inference uses CAMeL Parser’s `calima-msa-s31` database and BERT disambiguator. Follow the LDC archive installation steps in the README; pip does not install that licensed resource. Cached preprocessing is labeled with the database and disambiguator, and the current driver rejects older unlabeled or R13 caches.
+
 The legacy SuPar checkpoints use full-object serialization. With PyTorch 2.9.0, the supervised instructions set `TORCH_FORCE_NO_WEIGHTS_ONLY_LOAD=1` for the verified published checkpoints. This follows the [PyTorch serialization setting](https://docs.pytorch.org/docs/2.9/notes/serialization.html#environment-variables).
 
 The consolidated dependencies have been resolved for Linux/Python 3.11 and installed in a fresh Python 3.11 verification environment on macOS (where the vLLM marker skips that package). A CPU gold-token inference smoke test loaded the original BARECTB checkpoint and parsed a sentence; CAMeL CoNLL also returned 100% LAS/UAS on an identical gold/prediction pair. Full GPU inference, raw-text morphology processing, and complete score/timing reproduction still require validation on the target machine.

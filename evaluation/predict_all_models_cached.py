@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run equivalent CAMeL Parser gold/raw prediction while caching raw analysis."""
+"""Run CAMeL Parser gold/raw prediction with cached MSA-S31/BERT analysis."""
 
 from __future__ import annotations
 
@@ -15,6 +15,20 @@ import torch
 from camel_tools.utils.charmap import CharMapper
 from camel_tools.utils.dediac import dediac_ar
 from supar import Parser
+
+CACHE_VERSION = 2
+MORPHOLOGY_DATABASE = "calima-msa-s31"
+
+
+def validate_raw_cache(payload):
+    expected = {
+        "version": CACHE_VERSION,
+        "morphology_database": MORPHOLOGY_DATABASE,
+        "disambiguator": "bert",
+    }
+    if not isinstance(payload, dict) or any(payload.get(key) != value for key, value in expected.items()):
+        raise ValueError("Raw cache is not a verified MSA-S31/BERT cache. Use a new --cache path to preprocess with calima-msa-s31.")
+    return payload["raw_lines"], payload["sizes"], payload["raw_tuples"]
 
 
 def arguments() -> argparse.Namespace:
@@ -85,7 +99,7 @@ def build_raw_cache(camel_root: Path, gold_paths: list[Path], cache: Path):
         "bert",
         clitic_feats,
         get_tagset("catib"),
-        "r13",
+        MORPHOLOGY_DATABASE,
     )
     raw_tuples = handle_text(params)
     if len(raw_tuples) != len(all_lines):
@@ -94,8 +108,16 @@ def build_raw_cache(camel_root: Path, gold_paths: list[Path], cache: Path):
         )
     cache.parent.mkdir(parents=True, exist_ok=True)
     temporary = cache.with_suffix(cache.suffix + ".tmp")
+    payload = {
+        "version": CACHE_VERSION,
+        "morphology_database": MORPHOLOGY_DATABASE,
+        "disambiguator": "bert",
+        "raw_lines": all_lines,
+        "sizes": sizes,
+        "raw_tuples": raw_tuples,
+    }
     with temporary.open("wb") as stream:
-        pickle.dump((all_lines, sizes, raw_tuples), stream, protocol=pickle.HIGHEST_PROTOCOL)
+        pickle.dump(payload, stream, protocol=pickle.HIGHEST_PROTOCOL)
     temporary.replace(cache)
     return all_lines, sizes, raw_tuples
 
@@ -144,7 +166,7 @@ def main() -> None:
 
     if args.cache.is_file():
         with args.cache.open("rb") as stream:
-            raw_lines, sizes, raw_tuples = pickle.load(stream)
+            raw_lines, sizes, raw_tuples = validate_raw_cache(pickle.load(stream))
     else:
         print("RAW PREPROCESS START (one shared BERT disambiguation pass)", flush=True)
         raw_lines, sizes, raw_tuples = build_raw_cache(
