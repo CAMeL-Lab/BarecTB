@@ -4,8 +4,6 @@ This repository contains the code for **BARECTB: A Dependency Treebank and Parsi
 
 Khalid N. Elmadani, Mohamed Adel, Muhammed AbuOdeh, Reem Faraj, Jamila El-Gizuli, Hanada Taha, and Nizar Habash.
 
-[Dataset](https://huggingface.co/datasets/CAMeL-Lab/BAREC-TB) · [Supervised models](https://huggingface.co/collections/CAMeL-Lab/camelparser-barectb-6ad5d147a150e48c97598630)
-
 The code supports supervised dependency parsing with CAMeL Parser, retrieval based few-shot benchmarking of Fanar and Llama with vLLM, GPT Batch and Gemini API benchmarking, and evaluation with CAMeL CoNLL.
 
 ## Installation
@@ -37,7 +35,7 @@ The downloader saves the verified `Train.conllx`, `Dev.conllx`, and `Test.conllx
 
 ## Run the supervised models
 
-Download the three published checkpoints and link them into CAMeL Parser:
+Download the three published checkpoints from the [supervised models collection on Hugging Face](https://huggingface.co/collections/CAMeL-Lab/camelparser-barectb-6ad5d147a150e48c97598630) and link them into CAMeL Parser:
 
 ```bash
 python scripts/download_models.py
