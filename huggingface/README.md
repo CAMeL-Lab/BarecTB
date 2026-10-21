@@ -13,7 +13,7 @@ These are the original paper-era checkpoints referenced by the Git repository; t
 To download the published checkpoints from the repository root:
 
 ```bash
-python -m pip install -r requirements-models.txt
+python -m pip install -r requirements.txt
 python scripts/download_models.py
 ```
 

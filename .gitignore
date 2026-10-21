@@ -19,3 +19,6 @@ __pycache__/
 *.pyc
 *.log
 .DS_Store
+
+# Official dataset splits downloaded from Hugging Face.
+/data/BAREC-TB/

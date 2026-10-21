@@ -1891,7 +1891,9 @@ def parse_args() -> argparse.Namespace:
         action="store_true",
         help="Prepare all sentences in all 16 conditions instead of the pilot sample.",
     )
-    return parser.parse_args()
+    args = parser.parse_args()
+    args.run_root = args.run_root.expanduser().resolve()
+    return args
 
 
 def main() -> None:

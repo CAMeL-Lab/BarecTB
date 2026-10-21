@@ -1,70 +1,111 @@
-# LLM benchmarks and retrieved shots
+# Reproduce the benchmark conditions
 
-Two code sets are provided because the project ran the original paper benchmark and then a later expanded corpus benchmark. Use the matching split, training pool, prompt, and retrieved indices for each run. Do not compare the two result tables as though they used the same corpus version.
+For individual runs on the official Hugging Face dataset, use the complete Fanar, Llama, Gemini, and GPT commands in the [main README](../README.md). This guide covers the complete asynchronous matrix retained from the expanded experiments and its original snapshot inputs.
 
-## Original paper runners
+Install the single `requirements.txt` first. All commands below run from the repository root in the activated Python 3.11 environment. Full BF16 Fanar/Llama runs used four A100 GPUs. [Environment notes](REPRODUCIBILITY.md) distinguish the installable dependencies from the original vLLM development build.
 
-Install the lightweight client requirements in a Python environment:
+## Prepare the three training pools
+
+The matrix uses `data/benchmark/gold/{Dev,Test}.conllx` and `data/benchmark/train/barectb.conllx`, which link to the saved expanded snapshot. Obtain the original PATB + CAMeL Treebank training pool separately, then supply it in the original sentence order:
 
 ```bash
-python -m pip install -r requirements-benchmarks.txt
+export PATB_CAMEL_TRAIN=/absolute/path/to/patb_camel.conllx
+ln -s "$PATB_CAMEL_TRAIN" data/benchmark/train/patb_camel.conllx
+python - <<'PY'
+from pathlib import Path
+pool = Path('data/benchmark/train')
+patb = (pool / 'patb_camel.conllx').read_text(encoding='utf-8').rstrip()
+barec = (pool / 'barectb.conllx').read_text(encoding='utf-8').rstrip()
+(pool / 'patb_camel_barec.conllx').write_text(patb + '\n\n' + barec + '\n\n', encoding='utf-8')
+PY
 ```
 
-The original similarity script `benchmarks/paper/generate_shots.py` scores all training sentences with the project's approximate chrF++ function and sorts by descending similarity. Its JSON field called `distance` is actually a similarity score; larger is closer. The precomputed paper Dev/Test JSON files are in `retrieval/paper_matches/`. Each file's training indices refer to the matching train corpus; do not use a BARECTB index file with the PATB/CAMeL training pool. Regenerate a BARECTB Test file with:
+These files are ignored by Git. Their order must match the saved retrieval indices. The combined pool is PATB/CAMeL followed by expanded BARECTB Train. To score official annotation updates instead, create the same `gold/` and `train/` layout in a separate directory and set `BAREC_BENCH_DATA_ROOT` to its absolute path; new scores then use that dataset version.
+
+## Retrieved shots
+
+The complete matrix includes gold-token and raw-text Dev/Test, each with zero shots or ten shots from one of the three training pools: 16 conditions per model. The top-10 matches are selected by the original custom approximate chrF++ scorer. Higher `distance` values in the JSON mean higher similarity.
+
+The saved files in `retrieval/expanded_matches/` correspond to the original three pools and expanded queries. The worker reads them from `<run-root>/retrieval/`. Copy them as shown below. To recompute all matches instead:
 
 ```bash
-python benchmarks/paper/generate_shots.py --train_path data/paper/Train.conllx --test_dir data/paper/Test.conllx --output_file outputs/barec_test.json --top_k 5
+export BAREC_BENCH_RUN_ROOT="$PWD/outputs/recomputed_retrieval"
+python benchmarks/expanded/generate_fanar2_retrieval.py --chunk-size 32
 ```
 
-For Fanar-2 or Llama 4 Scout, run a [vLLM OpenAI-compatible server](https://docs.vllm.ai/en/latest/cli/) on port 8000 with the model available to vLLM. In another shell, use the same original gold-token runner for either model:
+That optimized implementation checks the combined training pool order and writes all six pool/split match files. Retrieval can be resource intensive. For a single custom pool, `benchmarks/paper/generate_shots.py` supports `--train_path`, `--test_dir`, `--output_file`, and `--top_k` as shown in the README.
+
+## Fanar-2 and Llama 4 Scout asynchronous runs
+
+The same worker runs either model directly through vLLM, without a separate server. Select one setup:
 
 ```bash
-python benchmarks/paper/vllm_gold.py --config benchmarks/prompts/gold.yaml --port 8000 --model_name QCRI/Fanar-2-27B-Instruct --input_dir data/paper/Test.conllx --output_dir outputs/fanar_gold --train_conllx data/paper/Train.conllx --match_file retrieval/paper_matches/barec_test.json --num_shots 5 --conllx_output_dir outputs/fanar_gold_conllx
+# Fanar-2 setup.
+export BAREC_BENCH_MODEL_ID=QCRI/Fanar-2-27B-Instruct
+export BAREC_BENCH_MODEL_PATH="$BAREC_BENCH_MODEL_ID"
+export BAREC_BENCH_RUN_ROOT="$PWD/outputs/fanar_matrix"
+export BAREC_BENCH_TABLE_NAME=fanar_results.tsv
+MODEL_CONTEXT=131072
+EXTRA_ARGS=()
 ```
 
-Replace `--model_name` with the exact name advertised by your Llama server for Llama 4 Scout. Use `benchmarks/paper/vllm_raw.py` and `benchmarks/prompts/raw.yaml` for raw-text inference; the remaining arguments are the same. `--sample-size 20` runs a small pilot; `--num_shots 0` gives zero-shot inference. The runner's optional `--gpu_metrics` uses `nvidia-smi`.
-
-For Gemini, set `GEMINI_API_KEY` or `GOOGLE_API_KEY`, then run:
+Or use the Llama setup after obtaining Hugging Face model access:
 
 ```bash
-python benchmarks/paper/gemini_gold.py --config benchmarks/prompts/gold.yaml --model_name YOUR_GEMINI_MODEL --input_dir data/paper/Test.conllx --output_dir outputs/gemini_gold --train_conllx data/paper/Train.conllx --match_file retrieval/paper_matches/barec_test.json --num_shots 5 --conllx_output_dir outputs/gemini_gold_conllx
+export BAREC_BENCH_MODEL_ID=meta-llama/Llama-4-Scout-17B-16E-Instruct
+export BAREC_BENCH_MODEL_PATH="$BAREC_BENCH_MODEL_ID"
+export BAREC_BENCH_RUN_ROOT="$PWD/outputs/llama_matrix"
+export BAREC_BENCH_TABLE_NAME=llama_results.tsv
+MODEL_CONTEXT=163840
+EXTRA_ARGS=(--enable-expert-parallel --language-model-only)
 ```
 
-`benchmarks/paper/gemini_raw.py` uses the raw prompt. For GPT, set `OPENAI_API_KEY`. The original Batch script has `prepare`, `upload`, `create`, `status`, `download`, and `run` subcommands. `prepare` creates local requests without submitting paid API work:
+Run both input settings, then merge and evaluate:
 
 ```bash
-python benchmarks/paper/gpt_gold.py prepare --config benchmarks/prompts/gold.yaml --cache_dir outputs/gpt_batch --input_dir data/paper/Test.conllx --shots_file retrieval/paper_matches/barec_test.json --train_file data/paper/Train.conllx --model YOUR_GPT_MODEL --num_shots 5
-```
+export BAREC_BENCH_WEIGHT_PRECISION='bfloat16; no weight quantization and no CPU offload'
+export BAREC_BENCH_CONTEXT_NOTE="Engine context ${MODEL_CONTEXT} tokens; no explicit completion-token cap"
+export BAREC_BENCH_SPECULATIVE_NOTE='Target-verified prompt n-gram decoding: 10 draft tokens, n-grams 3..5'
+export VLLM_WORKER_MULTIPROC_METHOD=spawn
+mkdir -p "$BAREC_BENCH_RUN_ROOT/retrieval"
+cp retrieval/expanded_matches/*.json "$BAREC_BENCH_RUN_ROOT/retrieval/"
 
-Use `run` with those arguments and `--conllx_output_dir` to submit and collect a complete Batch job. `benchmarks/paper/gpt_raw.py` pairs with the raw prompt. These scripts retain the pricing defaults present in the original source; supply current rates through their CLI options before interpreting cost output.
-
-## Expanded 160K runners
-
-The later code in `benchmarks/expanded/` was used for Fanar-2, Llama 4 Scout, GPT-5.4, and Gemini 3.5 Flash. It runs 0-shot and top-10 approximate chrF++ conditions over gold-token and raw-text Dev/Test, with three retrieval pools. `generate_fanar2_retrieval.py` is the faster implementation of the original scorer. It explicitly checks that the combined pool is PATB/CAMeL followed by expanded BARECTB Train. Set up the two user-supplied training pools described in [DATA.md](DATA.md) before running it.
-
-The expanded scripts now resolve prompts and data relative to this repository. Set `BAREC_BENCH_DATA_ROOT` if the expected `data/benchmark/` layout is elsewhere, `BAREC_BENCH_RUN_ROOT` for output, `BAREC_BENCH_MODEL_PATH` for a local model snapshot or Hugging Face model ID, and `CAMEL_CONLL_ROOT` for an evaluator checkout. Generated output defaults to ignored `outputs/expanded/`.
-
-The exact top-10 match files from the completed expanded run are in `retrieval/expanded_matches/`. Copy them into the run directory to skip retrieval recomputation. They contain indices, not the third party training text.
-
-```bash
-mkdir -p outputs/expanded
-cp -R retrieval/expanded_matches outputs/expanded/retrieval
-BAREC_BENCH_MODEL_PATH=QCRI/Fanar-2-27B-Instruct python benchmarks/expanded/run_fanar2_async_worker.py --mode gold --worker-id 0 --workers 1 --tensor-parallel-size 2
-BAREC_BENCH_MODEL_PATH=QCRI/Fanar-2-27B-Instruct python benchmarks/expanded/run_fanar2_async_worker.py --mode raw --worker-id 0 --workers 1 --tensor-parallel-size 2
+for MODE in gold raw; do
+  CUDA_VISIBLE_DEVICES=0,1,2,3 python benchmarks/expanded/run_fanar2_async_worker.py \
+    --mode "$MODE" --worker-id 0 --workers 1 --tensor-parallel-size 4 \
+    --request-batch-size 16 --request-prompt-token-budget 120000 \
+    --structured-backend xgrammar --ngram-speculative-tokens 10 \
+    --max-model-len "$MODEL_CONTEXT" --max-num-seqs 16 \
+    --max-num-batched-tokens 65536 --gpu-memory-utilization 0.95 \
+    "${EXTRA_ARGS[@]}"
+done
 python benchmarks/expanded/finalize_fanar2_benchmark.py
 ```
 
-To recompute instead, run `python benchmarks/expanded/generate_fanar2_retrieval.py`; this uses the exact training pools and can be resource intensive.
+These settings come from the completed BF16 run launchers. The finalizer merges worker responses, applies the original parsing repairs, writes CoNLL-X predictions, calls CAMeL CoNLL, and saves the result table under `<run-root>/results/`. `BAREC_BENCH_MODEL_PATH` can also be an absolute local model snapshot path. A distinct run root keeps different models and datasets from sharing resume records. The worker resumes completed sentences from its response files.
 
-The worker imports vLLM and uses structured output. Its original run scripts used A100 GPUs and specific tensor parallel, BF16, and quantization settings. Check available GPU memory and the model's access terms before choosing settings. For Llama 4 Scout, set `BAREC_BENCH_MODEL_PATH` and `BAREC_BENCH_MODEL_ID` to that model and use the worker's `--quantization`, `--enable-expert-parallel`, and `--language-model-only` options as needed for your hardware. Use a distinct `BAREC_BENCH_RUN_ROOT` so runs do not share responses.
+## GPT and Gemini Batch matrix
 
-The expanded cloud Batch script builds the same 16 conditions and uses the same retrieval files:
+The expanded cloud runner uses the same prompts, split order, three training pools, and retrieval matches as the asynchronous worker. Its recorded model IDs are `gpt-5.4` and `gemini-3.5-flash`.
+
+Copy the retrieval files to the cloud runner's expected location:
+
+```bash
+mkdir -p outputs/expanded/retrieval
+cp retrieval/expanded_matches/*.json outputs/expanded/retrieval/
+```
+
+Put your OpenAI key in `secrets/gpt.txt` and Gemini key in `secrets/gemini.txt`, one key per line. The directory is ignored by Git. Alternatively, set `BAREC_API_KEY_DIR` to an absolute private directory containing those filenames.
+
+Prepare all requests locally, submit each provider, and finalize:
 
 ```bash
 python benchmarks/expanded/run_cloud_batch.py prepare --full --run-root outputs/api_batch_full
-python benchmarks/expanded/run_cloud_batch.py status --run-root outputs/api_batch_full
+python benchmarks/expanded/run_cloud_batch.py run --provider openai --run-root outputs/api_batch_full
+python benchmarks/expanded/run_cloud_batch.py run --provider gemini --run-root outputs/api_batch_full
+python benchmarks/expanded/run_cloud_batch.py finalize --run-root outputs/api_batch_full
 ```
 
-For submission, put API keys in ignored `secrets/gpt.txt` and `secrets/gemini.txt`, one key per line, or set `BAREC_API_KEY_DIR` to a private directory with those filenames. Then run `stage`, `canary`, or `run` for `--provider openai` and `--provider gemini`, followed by `finalize`. The script's `--help` lists the precise subcommands. Its model identifiers and price constants record the completed 2026 runs; check current API availability and pricing before a new run. The original completed result summaries are in `reports/`.
+Preparation performs no API submission. Omit `--full` and choose a separate run root to prepare the two-sentence-per-condition pilot. `status --run-root outputs/api_batch_full` reports provider progress. Outputs, evaluations, and result tables live under the selected run root. The `run` commands submit paid Batch jobs.
 
-The expanded code's raw-text postprocessing helper was extracted from the existing `finalize_full_coverage.py` in the adjacent `arabic_syntax` project; its parsing repair function is copied as `benchmarks/expanded/finalize_full_coverage.py`. This preserves the function used by the original expanded scripts without requiring that sibling checkout.
+The main README also provides the independent GPT Batch and sequential Gemini runners, which accept model IDs and prices through CLI flags. The expanded runner preserves historical price constants and generation settings in its source. For exact historical comparisons, retain the original model identifiers, data snapshots, and prompt files.

@@ -1,0 +1,11 @@
+{
+  "repo_id": "CAMeL-Lab/BAREC-TB",
+  "revision": "7ac119d02d19aa575e053f83d9b67aa8ba5add8c",
+  "archive": "Data/BAREC_TB_splits_conllx.zip",
+  "archive_sha256": "4b5e6335b8d3f6ecdad070bf0010755a1946bbeef39abe2edc5f7a45774318cd",
+  "splits": {
+    "Train.conllx": "150c8219cae1cc2b85efc1a9a3de334374f84a7cb8142df62a1728af2fcfaaa4",
+    "Dev.conllx": "803a8412b2738b7868fe2784278f417539776604d1af0f85893c98672c99ddd6",
+    "Test.conllx": "9bbf68ace33bc55b4dcedc40853e036ef31c4001acc5137ebc2324e8395c2fd0"
+  }
+}

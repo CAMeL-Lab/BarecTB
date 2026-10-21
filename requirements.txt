@@ -1,0 +1,20 @@
+# Python 3.11. Full local-LLM benchmarks target Linux x86_64 with NVIDIA GPUs.
+# vLLM owns the CUDA runtime dependencies; do not layer the old upstream freezes on top.
+vllm==0.11.1; sys_platform == "linux" and platform_machine == "x86_64"
+torch==2.9.0
+transformers==4.57.1
+camel-tools==1.6.0
+supar @ git+https://github.com/yzhangcs/parser.git@17ec77dd05aaaa8160e3555134ff5f3b654e4991
+conllx-df @ git+https://github.com/CAMeL-Lab/conllx_df.git@8080ff17480c930c979a8ef26194a7f2b4417ee1
+
+# Provider clients, downloads, CoNLL I/O, retrieval, and evaluation.
+openai>=2.0,<3
+google-genai>=1.0,<2
+huggingface-hub>=0.34,<1
+conllu>=6,<7
+PyYAML>=6,<7
+numpy>=2,<3
+scipy>=1.15,<2
+pandas>=2.2,<3
+docopt==0.6.2
+editdistance>=0.8

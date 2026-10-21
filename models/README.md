@@ -5,7 +5,7 @@ The weights are hosted in the [CAMeL-Lab CamelParser-BARECTB collection](https:/
 From the repository root:
 
 ```bash
-python -m pip install -r requirements-models.txt
+python -m pip install -r requirements.txt
 python scripts/download_models.py
 ```
 

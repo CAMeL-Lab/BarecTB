@@ -1,44 +1,87 @@
-# Supervised CAMeL Parser models
+# Run the supervised parsers
 
-Download the three original checkpoints from the [CamelParser-BARECTB collection](https://huggingface.co/collections/CAMeL-Lab/camelparser-barectb-6ad5d147a150e48c97598630) into `models/`:
+Use the installation and data download commands in the [main README](../README.md), including `python -m pip install -r requirements.txt`. All commands below run from this repository's root unless a `cd` is shown.
 
-| Model name for `-m` | Training condition |
-| --- | --- |
-| [`barectb.model`](https://huggingface.co/CAMeL-Lab/camelparser-barectb-BARECTB) | BARECTB training data |
-| [`patb_camel.model`](https://huggingface.co/CAMeL-Lab/camelparser-barectb-PATB-CamelTB) | PATB and CAMeL Treebank training data |
-| [`patb_camel_barec.model`](https://huggingface.co/CAMeL-Lab/camelparser-barectb-PATB-CamelTB-BARECTB) | PATB, CAMeL Treebank, and BARECTB training data |
-
-Git tracks their original YAML configurations and SHA-256 checksums. Checkpoint binaries are fetched from Hugging Face and ignored by Git. Verify after transfer with `cd models && shasum -a 256 -c SHA256SUMS` on macOS, or `sha256sum -c SHA256SUMS` on Linux.
-
-The download script uses the exact uploaded revisions recorded in `huggingface/published.json` and verifies each file’s SHA-256 before saving it. It reuses existing matching checkpoints. To download one model, use `python scripts/download_models.py --model barectb` (or `patb_camel` or `patb_camel_barec`). The model repositories are public; downloads do not require a write token. [Publication details](../huggingface/README.md) include verified remote commit IDs and checksums.
-
-## Install upstream parser
-
-Use Python 3.11.13 as specified by [CAMeL Parser](https://github.com/CAMeL-Lab/camel_parser/tree/main). From the repository root:
+## Download and link the models
 
 ```bash
-git clone https://github.com/CAMeL-Lab/camel_parser.git external/camel_parser
-python3.11 -m venv .venv-parser
-source .venv-parser/bin/activate
-python -m pip install -r external/camel_parser/requirements.txt
-python -m pip install -r requirements-models.txt
 python scripts/download_models.py
 python scripts/link_camel_parser_models.py external/camel_parser
+camel_data -i morphology-db-msa-r13
+camel_data -i disambig-bert-unfactored-msa
+export TORCH_FORCE_NO_WEIGHTS_ONLY_LOAD=1
 ```
 
-`link_camel_parser_models.py` creates links in the upstream parser's `models/` directory and refuses to replace existing files. Run the downloader before linking the checkpoints. Git LFS is not needed for this repository.
+The environment variable enables loading the full-object SuPar checkpoints with the consolidated PyTorch version. Use it with the published checkpoints verified by the downloader.
 
-## Inference
+| Model | Training data |
+| --- | --- |
+| [`barectb.model`](https://huggingface.co/CAMeL-Lab/camelparser-barectb-BARECTB) | BARECTB |
+| [`patb_camel.model`](https://huggingface.co/CAMeL-Lab/camelparser-barectb-PATB-CamelTB) | PATB + CAMeL Treebank |
+| [`patb_camel_barec.model`](https://huggingface.co/CAMeL-Lab/camelparser-barectb-PATB-CamelTB-BARECTB) | PATB + CAMeL Treebank + BARECTB |
 
-For the upstream raw-text pipeline:
+The downloader pins the uploaded revisions in `huggingface/published.json` and verifies SHA-256. To download one model, add `--model barectb`, `--model patb_camel`, or `--model patb_camel_barec`. Git tracks the original configurations and checksums; the weights are hosted on Hugging Face.
+
+## Parse a sentence or file
 
 ```bash
 cd external/camel_parser
-python text_to_conll_cli.py -f text -i ../../data/paper/text/Test.txt -m barectb.model
+python text_to_conll_cli.py -f text -m barectb.model -s "القطة نائمة."
+python text_to_conll_cli.py -f text -m barectb.model -i ../../data/BAREC-TB/text/Test.txt
+cd ../..
 ```
 
-The CLI also accepts `-f conll -i /path/to/input.conllx` for preannotated input and `--multiroot` for the later multiple-root experiments. It prints the parse and timing to standard output; capture and clean that output as appropriate for your evaluation workflow. The `data/paper/text/` files are direct extractions of the CoNLL-X `# text =` metadata.
+Change `-m` to select another checkpoint. The CLI prints dependency parses and timing to stdout. For prediction files that can go directly into the evaluator, use the benchmark driver below.
 
-For the gold/raw prediction matrix used in the expanded work, the original driver is `evaluation/predict_all_models_cached.py`. It accepts `--camel-parser-root`, `--gold-dir`, `--model-table`, `--output-root`, and `--cache`. The included `evaluation/model_table.tsv` lists the three original checkpoints using repository-relative paths, so run it from the repository root. This path requires the upstream parser and its Python dependencies. The raw MSA-S31 driver is `evaluation/predict_all_models_raw_s31.py` and additionally needs the licensed morphology database described in the upstream README.
+## Benchmark all three models on Dev and Test
 
-The original YAML configurations preserve the training settings and historical HPC paths as provenance. Use the published Hugging Face checkpoints for inference; those historical paths are not required.
+The existing driver uses the three entries in `evaluation/model_table.tsv`. It predicts both gold-token and raw-text conditions, and caches the expensive raw-text preprocessing:
+
+```bash
+python evaluation/predict_all_models_cached.py \
+  --camel-parser-root external/camel_parser \
+  --gold-dir data/BAREC-TB \
+  --model-table evaluation/model_table.tsv \
+  --output-root outputs/supervised \
+  --cache outputs/supervised/cache/raw_r13.pkl
+```
+
+Predictions are written to:
+
+```text
+outputs/supervised/original/gold/<model>/Dev.conllx
+outputs/supervised/original/gold/<model>/Test.conllx
+outputs/supervised/original/raw/<model>/Dev.conllx
+outputs/supervised/original/raw/<model>/Test.conllx
+```
+
+Here `<model>` is `barectb`, `patb_camel`, or `patb_camel_barec`. `original` identifies the checkpoint generation in the model table. This command evaluates the released checkpoints on the official dataset; archived results use the data versions described in [DATA.md](DATA.md).
+
+Score a prediction:
+
+```bash
+python evaluation/evaluate.py \
+  --gold data/BAREC-TB/Test.conllx \
+  --parsed outputs/supervised/original/gold/barectb/Test.conllx \
+  --normalize --output-dir outputs/supervised/scores --name barectb_gold_test
+```
+
+Change the model, `gold`/`raw`, and split paths to score the other conditions. Use a new `--name` for each score file. Existing prediction files are reused by the driver; choose a new output/cache directory when changing the input data.
+
+## Multiple roots and MSA-S31
+
+For the multiple-root driver, replace `evaluation/predict_all_models_cached.py` with `evaluation/predict_all_models_multiroot_cached.py` and use a distinct output/cache directory. This requires an upstream CAMeL Parser checkout containing `_decode_multiroot`.
+
+The original raw MSA-S31 driver additionally needs the separately installed morphology database:
+
+```bash
+python evaluation/predict_all_models_raw_s31.py \
+  --camel-parser-root external/camel_parser \
+  --gold-dir data/BAREC-TB \
+  --model-table evaluation/model_table.tsv \
+  --morphology-db-path /path/to/calima-msa-s31/morphology.db \
+  --output-root outputs/supervised_s31 \
+  --cache outputs/supervised_s31/cache/raw_s31.pkl
+```
+
+Follow [CAMeL Parser's MSA-S31 installation instructions](https://github.com/CAMeL-Lab/camel_parser#using-another-morphology-database) for the CAMeL Tools data packages and LDC resource. These non-Python resources are separate from `requirements.txt`. The original YAML configurations retain historical training paths as provenance; those paths are not needed for inference.

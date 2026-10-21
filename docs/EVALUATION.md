@@ -1,17 +1,18 @@
-# Evaluation
+# Evaluate dependency parses
 
-BARECTB data are CoNLL-X with ten tab-separated columns. Sentence metadata includes `# text =` (raw text) and `# treeTokens =` (gold tokens). Dev and Test in `data/paper/` belong to the paper benchmark; `data/expanded_160k/` is a later version. Match the prediction to the same version and split.
-
-Install the original [CAMeL CoNLL](https://github.com/CAMeL-Lab/camel_conll) evaluator, whose `conll_evaluation.py` reports tokenization, POS, UAS, LAS, and related metrics:
+Install the repository's single `requirements.txt` and clone [CAMeL CoNLL](https://github.com/CAMeL-Lab/camel_conll) as shown in the main README. The requirements already include the evaluator's Python dependencies.
 
 ```bash
-git clone https://github.com/CAMeL-Lab/camel_conll.git external/camel_conll
-python3.11 -m venv .venv-eval
-source .venv-eval/bin/activate
-python -m pip install -r external/camel_conll/requirements.txt
-python evaluation/evaluate.py --gold data/paper/Test.conllx --parsed /path/to/predictions.conllx --normalize --output-dir outputs/eval --name paper_test
+python evaluation/evaluate.py \
+  --gold data/BAREC-TB/Test.conllx \
+  --parsed outputs/fanar_gold_conllx/Test.conllx \
+  --normalize --output-dir outputs/evaluation --name fanar_gold_test
 ```
 
-`--normalize` passes the `-x -n -a` punctuation, number, and Arabic letter normalization flags used by the expanded benchmark scripts. Omit it for an unnormalized score. The wrapper accepts `--camel-conll-root` if the checkout is elsewhere. Gold and prediction files must contain sentences in the same order. For directory evaluation, the evaluator also expects matching filenames.
+Use the same command for supervised, Fanar, Llama, GPT, and Gemini prediction files. Change `--parsed` and `--name` for each condition. The wrapper runs upstream `conll_evaluation.py` and saves its TSV output, which contains tokenization, POS, UAS, LAS, and related scores. LLM runners do not predict POS; POS accuracy is not an LLM benchmark target here.
 
-The expanded summary tables in `reports/` were copied from completed runs; the code in `benchmarks/expanded/` generates the associated predictions and evaluations. Results are version specific.
+`--normalize` passes the `-x -n -a` punctuation, number, and Arabic letter normalization flags used by the saved expanded scripts. Omit it for an unnormalized score. Use `--camel-conll-root /path/to/camel_conll` if the checkout is elsewhere.
+
+Gold and prediction files must use the same corpus version and sentence order. CAMeL CoNLL also expects matching filenames, including for file-to-file evaluation; use `Test.conllx` on both sides. For pilot runs, evaluate against the corresponding gold subset rather than the full Test split. CoNLL-X data have ten tab-separated columns, with `# text =` and `# treeTokens =` metadata.
+
+The official Hub release updates some Dev/Test annotations relative to archived benchmarks. [DATA.md](DATA.md) records the version distinctions.
