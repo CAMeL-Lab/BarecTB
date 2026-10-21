@@ -2,8 +2,6 @@
 
 This repository contains the code for **BARECTB: A Dependency Treebank and Parsing Benchmark for Arabic Children’s Texts**, ArabicNLP 2026.
 
-Khalid N. Elmadani, Mohamed Adel, Muhammed AbuOdeh, Reem Faraj, Jamila El-Gizuli, Hanada Taha, and Nizar Habash.
-
 The code supports supervised dependency parsing with CAMeL Parser, retrieval based few-shot benchmarking of Fanar and Llama with vLLM, GPT Batch and Gemini API benchmarking, and evaluation with CAMeL CoNLL.
 
 ## Installation
