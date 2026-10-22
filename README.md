@@ -1,6 +1,6 @@
-# BARECTB
+# BAREC-TB
 
-This repository contains the code for **BARECTB: A Dependency Treebank and Parsing Benchmark for Arabic Children’s Texts**, ArabicNLP 2026.
+This repository contains the code for **BAREC-TB: A Dependency Treebank and Parsing Benchmark for Arabic Children’s Texts**, ArabicNLP 2026.
 
 The code supports supervised dependency parsing with CAMeL Parser, retrieval based few-shot benchmarking of Fanar and Llama with vLLM, GPT Batch and Gemini API benchmarking, and evaluation with CAMeL CoNLL.
 
@@ -48,9 +48,9 @@ This uses the **MSA-S31 morphology database and BERT disambiguator**, following 
 
 | Model name | Training data |
 | --- | --- |
-| `barectb.model` | BARECTB |
+| `barectb.model` | BAREC-TB |
 | `patb_camel.model` | PATB + CAMeL Treebank |
-| `patb_camel_barec.model` | PATB + CAMeL Treebank + BARECTB |
+| `patb_camel_barec.model` | PATB + CAMeL Treebank + BAREC-TB |
 
 Run a model on an Arabic sentence:
 
@@ -66,7 +66,7 @@ Replace `-m barectb.model` with either of the other model names. To parse a text
 
 ## Prepare the retrieved shots
 
-Prepare the saved top-10 BARECTB training matches for the downloaded splits:
+Prepare the saved top-10 BAREC-TB training matches for the downloaded splits:
 
 ```bash
 python scripts/prepare_barectb_matches.py
@@ -189,11 +189,13 @@ Replace `--parsed` with the output from any model. `--normalize` enables the CAM
 If you use this code, the treebank, or the models in your research, please cite:
 
 ```bibtex
-@inproceedings{elmadani-etal-2026-barectb,
-  title = {{BARECTB}: A Dependency Treebank and Parsing Benchmark for Arabic Children's Texts},
-  author = {Elmadani, Khalid N. and Adel, Mohamed and AbuOdeh, Muhammed and Faraj, Reem and El-Gizuli, Jamila and Taha, Hanada and Habash, Nizar},
-  booktitle = {Proceedings of ArabicNLP 2026},
+@inproceedings{elmadani-etal-2026-barec-tb,
+  title = {BAREC-TB: A Dependency Treebank and Parsing Benchmark for Arabic Children’s Texts},
+  author = {Elmadani, Khalid N. and Adel, Mohamed and AbuOdeh, Muhammed and Faraj, Reem and El-Gizuli, Jamila and Taha-Thomure, Hanada and Habash, Nizar},
+  booktitle = {Proceedings of The Fourth {A}rabic Natural Language Processing Conference},
+  month = {October},
+  year = {2026},
   address = {Budapest, Hungary},
-  year = {2026}
+  publisher = {Association for Computational Linguistics}
 }
 ```
